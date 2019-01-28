@@ -1,4 +1,4 @@
-# Voice-Converter
+# 딥 러닝을 이용한 음성 변환기(Voice-Converter)
 
 This program is based on by https://github.com/andabi/deep-voice-conversion
 
@@ -11,6 +11,7 @@ Original Author :
 # 실행 환경
 
 Ubuntu 16.04 LTS 64bit
+
 Python 3.5 64bit
 
 # 필요 라이브러리
@@ -70,3 +71,16 @@ Python 3.5 64bit
 지시대로 실행하시면 됩니다.
 
 (2018-11-17 : 모델 변경 기능을 추가했습니다. 현재는 4가지 모델을 사용 가능합니다)
+
+
+# References:
+
+- [**Phonetic posteriorgrams for many-to-one voice conversion without parallel data training**](https://ieeexplore.ieee.org/document/7552917), Lifa Sun, Kun Li, Hao Wang, Shiyin Kang, and Helen Meng, *2016 IEEE International Conference on Multimedia and Expo (ICME)*, Seattle, WA, 2016, pp. 1-6.
+
+- [**Tacotron: Towards End-to-End Speech Synthesis**](https://arxiv.org/abs/1703.10135), Yuxuan Wang, RJ Skerry-Ryan, Daisy Stanton, Yonghui Wu, Ron J. Weiss, Navdeep Jaitly, Zongheng Yang, Ying Xiao, Zhifeng Chen, Samy Bengio, Quoc Le, Yannis Agiomyrgiannakis, Rob Clark, Rif A. Saurous, *arXiv:1703.10135 [cs.CL]*
+
+- [**Fast Signal Reconstruction from Magnitude STFT Spectrogram based on Spectrogram Consistency**](https://www.researchgate.net/publication/228830559_Fast_Signal_Reconstruction_from_Magnitude_STFT_Spectrogram_based_on_Spectrogram_Consistency), Jonathan Le Roux, Hirokazu Kameoka, Nobutaka Ono, and Shigeki Sagayama, *in Proc. International Conference on Digital Audio Effects (DAFx)*, Sep. 2010, pp. 397—403.
+
+- [**WORLD: A Vocoder-Based High-Quality Speech Synthesis System for Real-Time Applications**](https://www.jstage.jst.go.jp/article/transinf/E99.D/7/E99.D_2015EDP7457/_article), Masanori Morise, Fumiya Yokomori, and Kenji Ozawa, *IEICE transactions on information and systems*, Vol. E99-D, No. 7, 2016, pp. 1877-1884.
+
+- [**High Quality Voice Conversion through Phoneme-Based Linear Mapping Functions with STRAIGHT for Mandarin**](https://ieeexplore.ieee.org/document/4406422), Kun Liu, Jianping Zhang, and Yonghong Yan, *Fourth International Conference on Fuzzy Systems and Knowledge Discovery (FSKD 2007)*, Vol. 4, 2007, pp. 410-414.
