@@ -28,7 +28,7 @@ from tensorpack.callbacks.base import Callback
 
 def convert_spectral_envelope(predictor, mfcc, sp_en):
     pred_s = datetime.datetime.now()
-    pred_sp_en, ppgs = predictor(mfcc, sp_en)
+    pred_sp_en, _, ppgs = predictor(mfcc, sp_en)
     pred_e = datetime.datetime.now()
     pred_t = pred_e - pred_s
     print("Predicting time:{}s".format(pred_t.seconds))
@@ -55,7 +55,7 @@ def get_eval_input_names():
 
 
 def get_eval_output_names():
-    return ['pred_spec', 'y_spec', 'ppgs']
+    return ['pred_sp_en', 'y_sp_en', 'ppgs']
 
 
 def set_enviroment(args, logdir1, logdir2):

@@ -119,11 +119,9 @@ class Net2(ModelDesc):
 
         # summaries
         tf.summary.scalar('net2/train/loss', self.cost)
-        tf.summary.scalar('net1/train/acc', diff)
 
         if not is_training:
             tf.summary.scalar('net2/eval/summ_loss', self.cost)
-            tf.summary.scalar('net1/train/acc', diff)
 
     def _get_optimizer(self):
         gradprocs = [
