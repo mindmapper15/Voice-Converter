@@ -10,9 +10,8 @@ import pyworld as pw
 from tensorpack.dataflow.base import RNGDataFlow
 from tensorpack.dataflow.common import BatchData
 from tensorpack.dataflow import PrefetchData
-from audio import read_wav, preemphasis, amp2db
+from audio import read_wav, preemphasis, amp2db, normalize_db
 from hparam import hparam as hp
-from utils import normalize_0_1
 
 class DataFlowForConvert(RNGDataFlow):
 
@@ -147,14 +146,14 @@ def get_mfcc_and_spectral_envelope(wav_file, trim=True, random_crop=False, isCon
         length = int(hp.default.sr * hp.default.duration)
         wav = librosa.util.fix_length(wav, length)
 
-    # Pre-emphasis
-    wav = preemphasis(wav, coeff=hp.default.preemphasis)
-
     return _get_mfcc(wav, hp.default.n_fft, hp.default.win_length, hp.default.hop_length), _get_spectral_envelope(wav, hp.default.n_fft)
 
 
 # TODO refactoring
 def _get_mfcc(wav, n_fft, win_length, hop_length):
+
+    # Pre-emphasis
+    wav = preemphasis(wav, coeff=hp.default.preemphasis)
 
     # Get spectrogram
     D = librosa.stft(y=wav, n_fft=n_fft, hop_length=hop_length, win_length=win_length)
@@ -172,6 +171,9 @@ def _get_mfcc(wav, n_fft, win_length, hop_length):
 
 def _get_spectral_envelope(wav, n_fft, f0_method='dio'):
 
+    # Pre-emphasis
+    wav = preemphasis(wav, coeff=hp.default.preemphasis)
+    
     # Extract F0 info. Default Extraction method is dio-stonemask for speed.
     if f0_method == 'dio':
         f0, t_table = pw.dio(wav, hp.default.sr)
@@ -182,7 +184,13 @@ def _get_spectral_envelope(wav, n_fft, f0_method='dio'):
     # Extract Spectral Envelope
     spectral_envelope = pw.cheaptrick(wav, f0, t_table, hp.default.sr, fft_size = n_fft)
 
-    return spectral_envelope
+    # amp to db
+    sp_en_db = librosa.amplitude_to_db(spectral_envelope)
+
+    # Normalize Spectral Envelope to 0 ~ 1
+    sp_en_db = normalize_db(sp_en_db, hp.default.max_db, hp.default.min_db)
+
+    return sp_en_db
 
 
 def read_mfccs_and_spectral_envelope(npz_file):

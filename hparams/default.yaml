@@ -31,7 +31,7 @@ logdir_path: './logdir'
 
 train1:
     # path
-    data_path: './datasets/TIMIT/TRAIN/*/*/*.WAV'
+    # data_path: '../../datasets/TIMIT/TRAIN/*/*/*.WAV'
 
     # model
     hidden_units: 128  # alias: E
@@ -42,8 +42,8 @@ train1:
     dropout_rate: 0.2
 
     # train
-    batch_size: 32
-    lr: 0.0003
+    batch_size: 128
+    lr: 0.001
     num_epochs: 4500
     steps_per_epoch: 100
     save_per_epoch: 2
@@ -51,7 +51,7 @@ train1:
 ---
 train2:
     # path
-    data_path: './datasets/donald'
+    data_path: '../../datasets/slt'
 
     # model
     hidden_units: 256  # alias: E
@@ -77,10 +77,10 @@ train2:
 ---
 test1:
     # path
-    data_path: './datasets/TIMIT/TEST/*/*/*.wav'
+    data_path: '../../datasets/TIMIT/TEST/*/*/*.WAV'
 
     # test
-    batch_size: 32
+    batch_size: 128
 ---
 test2:
     # path

@@ -115,12 +115,15 @@ class Net2(ModelDesc):
         self.pred_sp_en = tf.identity(self.pred_sp_en, name='pred_sp_en')
 
         self.cost = self.loss()
+        diff = self.diff()
 
         # summaries
         tf.summary.scalar('net2/train/loss', self.cost)
+        tf.summary.scalar('net1/train/acc', diff)
 
         if not is_training:
             tf.summary.scalar('net2/eval/summ_loss', self.cost)
+            tf.summary.scalar('net1/train/acc', diff)
 
     def _get_optimizer(self):
         gradprocs = [
@@ -148,7 +151,7 @@ class Net2(ModelDesc):
         # prenet_out을 CBHG에 넣어
         pred_sp_en = cbhg(prenet_out, hp.train2.num_banks, hp.train2.hidden_units // 2,
                         hp.train2.num_highway_blocks, hp.train2.norm_type, is_training,
-                        scope="cbhg_mel")
+                        scope="cbhg_sp_en")
         pred_sp_en = tf.layers.dense(pred_sp_en, self.y_sp_en.shape[-1], name='pred_sp_en')  # (N, T, n_mels)
 
         return pred_sp_en

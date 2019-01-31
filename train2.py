@@ -57,7 +57,7 @@ def train(args, logdir1, logdir2):
         session_inits.append(SaverRestore(ckpt1, ignore=['global_step']))
     train_conf = AutoResumeTrainConfig(
         model=model,
-        data=QueueInput(df(n_prefetch=1000, n_thread=8)),
+        data=QueueInput(df(n_prefetch=800, n_thread=8)),
         callbacks=[
             # TODO save on prefix net2
             ModelSaver(checkpoint_dir=logdir2),

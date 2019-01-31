@@ -81,7 +81,7 @@ def crop_random_wav(wav, length):
 
 def mp3_to_wav(src_path, tar_path):
     """
-    Read mp3 file from source path, convert it to wav and write it to target path. 
+    Read mp3 file from source path, convert it to wav and write it to target path.
     Necessary libraries: ffmpeg, libav.
     :param src_path: source mp3 file path
     :param tar_path: target wav file path
@@ -192,7 +192,7 @@ def spec2wav(mag, n_fft, win_length, hop_length, num_iters=30, phase=None):
     return wav
 
 def spec2wav_lws(mag, n_fft, win_length, hop_length, mode):
-    
+
     lws_processor = lws_mod(n_fft, win_length, hop_length, mode=mode)
     mag = mag.astype(np.float64)
     stft_from_mag = lws_processor.run_lws(mag)
@@ -283,22 +283,6 @@ def denormalize_db(norm_db, max_db, min_db):
     return db
 
 
-def dynamic_range_compression(db, threshold, ratio, method='downward'):
-    """
-    Execute dynamic range compression(https://en.wikipedia.org/wiki/Dynamic_range_compression) to dB.
-    :param db: Decibel-scaled magnitudes
-    :param threshold: Threshold dB
-    :param ratio: Compression ratio.
-    :param method: Downward or upward.
-    :return: Range compressed dB-scaled magnitudes
-    """
-    if method is 'downward':
-        db[db > threshold] = (db[db > threshold] - threshold) / ratio + threshold
-    elif method is 'upward':
-        db[db < threshold] = threshold - ((threshold - db[db < threshold]) / ratio)
-    return db
-
-
 def emphasize_magnitude(mag, power=1.2):
     """
     Emphasize a magnitude spectrogram by applying power function. This is used for removing noise.
@@ -310,85 +294,19 @@ def emphasize_magnitude(mag, power=1.2):
     return emphasized_mag
 
 
-def wav2melspec(wav, sr, n_fft, win_length, hop_length, n_mels, time_first=True, **kwargs):
-    # Linear spectrogram
-    mag_spec, phase_spec = wav2spec(wav, n_fft, win_length, hop_length, time_first=False)
-
-    # Mel-spectrogram
-    mel_spec = linear_to_mel(mag_spec, sr, n_fft, n_mels, **kwargs)
-
-    # Time-axis first
-    if time_first:
-        mel_spec = mel_spec.T  # (t, n_mels)
-
-    return mel_spec
-
-
-def wav2melspec_db(wav, sr, n_fft, win_length, hop_length, n_mels, normalize=False, max_db=None, min_db=None,
-                   time_first=True, **kwargs):
-    # Mel-spectrogram
-    mel_spec = wav2melspec(wav, sr, n_fft, win_length, hop_length, n_mels, time_first=False, **kwargs)
-
-    # Decibel
-    mel_db = librosa.amplitude_to_db(mel_spec)
-
-    # Normalization
-    mel_db = normalize_db(mel_db, max_db, min_db) if normalize else mel_db
-
-    # Time-axis first
-    if time_first:
-        mel_db = mel_db.T  # (t, n_mels)
-
-    return mel_db
-
-
-def wav2mfcc(wav, sr, n_fft, win_length, hop_length, n_mels, n_mfccs, preemphasis_coeff=0.97, time_first=True,
-             **kwargs):
-    # Pre-emphasis
-    wav_preem = preemphasis(wav, coeff=preemphasis_coeff)
-
-    # Decibel-scaled mel-spectrogram
-    mel_db = wav2melspec_db(wav_preem, sr, n_fft, win_length, hop_length, n_mels, time_first=False, **kwargs)
-
-    # MFCCs
-    mfccs = np.dot(librosa.filters.dct(n_mfccs, mel_db.shape[0]), mel_db)
-
-    # Time-axis first
-    if time_first:
-        mfccs = mfccs.T  # (t, n_mfccs)
-
-    return mfccs
-
-
-def f0_adapt(source_wav, target_wav, f0_info_target_dir, samplerate, method='dio'):
+def f0_adapt(f0_source, f0_info_target_dir):
     """
     Convert F0 frequency from source speech to target speech
     using Logarithm Gaussian normalization function (https://ieeexplore.ieee.org/document/4406422)
     with WORLD Vocoder (https://github.com/JeremyCCHsu/Python-Wrapper-for-World-Vocoder)
-    
+
     Parameters
     -------------
-    source_wav : np.ndarray
-        Source Speaker speech
-
-    target_wav : np.ndarray
-        Converted Target Speaker speech
+    f0_source : np.ndarray
+        F0 information about Source Speaker speech
 
     f0_info_target_dir : str
         Directory of NPZ file includes F0 information about Target Speaker Dataset.
-
-    samplerate : int
-        Samplerate of both Source and Target Spaker speech
-
-    method : {'dio', 'harvest'} | optional
-        F0 extract method. Default is 'dio'
-
-        'dio' : Extract F0 with DIO algorithm and refine it with Stonemask algorithm.
-                Fast and reliable F0 extract method.
-
-        'harvest' : Extract F0 with Harvest algorithm.
-                    Slower than 'dio' but produce better result.
-                    
     """
 
     # Load F0 mean and variance of Target Speaker dataset from NPZ file.
@@ -398,26 +316,11 @@ def f0_adapt(source_wav, target_wav, f0_info_target_dir, samplerate, method='dio
 
     f0_info_target.close()
 
-    # Extract F0 from each speech waveform.
-    if method == 'dio':
-        _f0_source, t_source = pw.dio(source_wav, samplerate)
-        f0_source = pw.stonemask(source_wav, _f0_source, t_source, samplerate)
-
-        _f0_target, t_target = pw.dio(target_wav, samplerate)
-        f0_target = pw.stonemask(target_wav, _f0_target, t_target, samplerate)
-        
-    elif method == 'harvest':
-        f0_source, t_source = pw.harvest(source_wav, samplerate)
-        f0_target, t_target = pw.harvest(target_wav, samplerate)
-        
-    else:
-        raise ParameterError('Invalid method specification: {}'.format(method))
-
-    # Calculate F0 mean and variance of source speaker's speech
+    # Calculate Log F0 mean and variance of source speaker's speech
     f0_mean_source = np.log(np.mean(f0_source[f0_source!=0]))
     f0_variance_source = np.log(np.var(f0_source[f0_source!=0]))
 
-    f0_converted = np.zeros(f0_target.shape, dtype=f0_target.dtype)
+    f0_converted = np.zeros(f0_source.shape, dtype=f0_target.dtype)
 
     # Convert source's F0 using Logarithm Gaussian normalization function
     for i in range(f0_target.shape[0]):
@@ -427,12 +330,4 @@ def f0_adapt(source_wav, target_wav, f0_info_target_dir, samplerate, method='dio
             f0_converted[i] = np.exp((np.log(f0_source[i]) - f0_mean_source)
                                      * f0_variance_target / f0_variance_source + f0_mean_target)
 
-    # Extract Spectral Envelope and Aperiodicity from converted target speaker's speech
-    sp = pw.cheaptrick(target_wav, f0_converted, t_target, samplerate)
-    ap = pw.d4c(target_wav, f0_converted, t_target, samplerate)
-
-    # Re-Synthesize target speaker's speech with converted F0
-    wav_f0_adapted = pw.synthesize(f0_converted, sp, ap, samplerate)
-
-    return wav_f0_adapted
-
+    return f0_converted
