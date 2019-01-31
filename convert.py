@@ -113,6 +113,8 @@ def do_convert(predictor, input_name):
     input_sp_en = np.expand_dims(spec, axis=0)
 
     output_sp_en, ppgs = convert(predictor, mfcc, input_sp_en)
+    output_sp_en = denormalize_db(output_sp_en, hp.default.max_db, hp.default.min_db)
+    output_sp_en = librosa.db_to_amplitude(output_sp_en)
 
     # F0 transformation with WORLD Vocoder
     output_f0 = f0_adapt(input_f0, logdir2)
