@@ -173,7 +173,7 @@ def _get_spectral_envelope(wav, n_fft, f0_method='dio'):
 
     # Pre-emphasis
     wav = preemphasis(wav, coeff=hp.default.preemphasis)
-    
+
     # Extract F0 info. Default Extraction method is dio-stonemask for speed.
     if f0_method == 'dio':
         f0, t_table = pw.dio(wav, hp.default.sr)
@@ -190,7 +190,7 @@ def _get_spectral_envelope(wav, n_fft, f0_method='dio'):
     # Normalize Spectral Envelope to 0 ~ 1
     sp_en_db = normalize_db(sp_en_db, hp.default.max_db, hp.default.min_db)
 
-    return sp_en_db
+    return sp_en_db.astype(np.float32)
 
 
 def read_mfccs_and_spectral_envelope(npz_file):

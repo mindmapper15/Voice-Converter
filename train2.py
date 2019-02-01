@@ -22,6 +22,7 @@ from hparam import hparam as hp
 from models import Net2
 from utils import remove_all_files
 from preprocdata import preprocessing
+from convert import ConvertCallback
 
 
 def train(args, logdir1, logdir2):
@@ -61,7 +62,7 @@ def train(args, logdir1, logdir2):
         callbacks=[
             # TODO save on prefix net2
             ModelSaver(checkpoint_dir=logdir2),
-            # ConvertCallback(logdir2, hp.train2.test_per_epoch),
+            ConvertCallback(logdir2, hp.train2.test_per_epoch),
         ],
         max_epoch=hp.train2.num_epochs,
         steps_per_epoch=dataset_size//hp.train2.batch_size,

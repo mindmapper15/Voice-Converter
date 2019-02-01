@@ -320,10 +320,10 @@ def f0_adapt(f0_source, f0_info_target_dir):
     f0_mean_source = np.log(np.mean(f0_source[f0_source!=0]))
     f0_variance_source = np.log(np.var(f0_source[f0_source!=0]))
 
-    f0_converted = np.zeros(f0_source.shape, dtype=f0_target.dtype)
+    f0_converted = np.zeros(f0_source.shape, dtype=f0_source.dtype)
 
     # Convert source's F0 using Logarithm Gaussian normalization function
-    for i in range(f0_target.shape[0]):
+    for i in range(f0_source.shape[0]):
         if f0_source[i] == 0:
             f0_converted[i] = f0_converted[i-1]
         else:
