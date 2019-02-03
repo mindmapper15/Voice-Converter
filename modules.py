@@ -7,7 +7,7 @@ import tensorflow as tf
 
 
 def embed(inputs, vocab_size, num_units, zero_pad=True, scope="embedding", reuse=None):
-    '''Embeds a given tensor. 
+    '''Embeds a given tensor.
 
     Args:
       inputs: A `Tensor` with type `int32` or `int64` containing the ids
@@ -23,6 +23,8 @@ def embed(inputs, vocab_size, num_units, zero_pad=True, scope="embedding", reuse
     Returns:
       A `Tensor` with one more rank than inputs's. The last dimesionality
         should be `num_units`.
+    this is for test
+    this is for test
     '''
     with tf.variable_scope(scope, reuse=reuse):
         lookup_table = tf.get_variable('lookup_table',
