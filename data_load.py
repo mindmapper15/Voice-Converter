@@ -45,10 +45,16 @@ class DataFlow(RNGDataFlow):
 
 class Net1DataFlow(DataFlow):
 
+    def __init__(self, data_path, batch_size):
+        self.batch_size = batch_size
+        npz_path = data_path + '/*.npz'
+        self.npz_files = glob.glob(npz_path)
+
     def get_data(self):
         while True:
-            wav_file = random.choice(self.wav_files)
-            yield get_mfccs_and_phones(wav_file=wav_file)
+            npz_file = random.choice(self.npz_files)
+            #print(npz_file)
+            yield read_mfccs_and_phones(npz_file)
 
 
 class Net2DataFlow(DataFlow):
@@ -63,6 +69,7 @@ class Net2DataFlow(DataFlow):
             npz_file = random.choice(self.npz_files)
             #print(npz_file)
             yield read_mfccs_and_spectral_envelope(npz_file)
+            
 
 def wav_random_crop(wav, sr, duration):
     assert (wav.ndim <= 2)
@@ -86,9 +93,7 @@ def get_mfccs_and_phones(wav_file, trim=False, random_crop=True):
     # Load
     wav = read_wav(wav_file, sr=hp.default.sr)
 
-    mfccs = _get_mfcc(wav, hp.default.preemphasis, hp.default.n_fft,
-                                     hp.default.win_length,
-                                     hp.default.hop_length)
+    mfccs = _get_mfcc(wav, hp.default.n_fft, hp.default.win_length, hp.default.hop_length)
 
     # timesteps
     num_timesteps = mfccs.shape[0]
@@ -192,6 +197,16 @@ def _get_spectral_envelope(wav, n_fft, f0_method='dio'):
 
     return sp_en_db.astype(np.float32)
 
+
+def read_mfccs_and_phones(npz_file):
+    np_arrays = np.load(npz_file)
+
+    mfccs = np_arrays['mfccs']
+    phns = np_arrays['phns']
+
+    np_arrays.close()
+
+    return mfccs, phns
 
 def read_mfccs_and_spectral_envelope(npz_file):
     np_arrays = np.load(npz_file)

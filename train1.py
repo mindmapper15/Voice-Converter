@@ -19,6 +19,7 @@ from tensorpack.input_source.input_source import QueueInput
 from data_load import Net1DataFlow
 from hparam import hparam as hp
 from models import Net1
+from preprocdata1 import preprocessing
 import tensorflow as tf
 
 
@@ -80,8 +81,9 @@ if __name__ == '__main__':
     hp.set_hparam_yaml(args.case)
     logdir_train1 = '{}/train1'.format(hp.logdir)
 
-    print('case: {}, logdir: {}'.format(args.case, logdir_train1))
+    print('case: {}, logdir: {}, Data Path: {}'.format(args.case, logdir_train1, hp.train1.data_path))
 
+    preprocessing(hp.train1.data_path)
     train(args, logdir=logdir_train1)
 
     print("Done")
