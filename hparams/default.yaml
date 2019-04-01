@@ -1,0 +1,102 @@
+---
+default:
+    sr: 16000
+    frame_shift: 0.005
+    frame_length:  0.025
+    win_length: 400
+    hop_length: 80
+    n_fft: 512
+    preemphasis: 0.97
+    n_mcep: 36 # Number of mel-cepstral coefficient
+    n_mfcc: 20 # Number of mfcc coefficient
+    n_iter: 60 # Number of inversion iterations
+    lws_mode: 'speech'
+    n_mels: 40
+    duration: 2
+    max_db: 35
+    min_db: -55
+    use_gpu: True
+    gpu_list: '0'
+
+    # model
+    hidden_units: 256  # alias: E
+    num_banks: 16
+    num_highway_blocks: 4
+    norm_type: 'ins'  # a normalizer function. value: bn, ln, ins, or None
+    t: 1.0  # temperature
+    dropout_rate: 0.2
+
+    # train
+    batch_size: 32
+
+logdir_path: './logdir'
+
+train1:
+    # path
+    dataset_path: '/home/john/datasets'
+    preproc_data_path: './preproc_datasets'
+
+    # model
+    hidden_units: 128  # alias: E
+    num_banks: 8
+    num_highway_blocks: 8
+    num_gru_layers: 1
+    norm_type: 'ins'  # a normalizer function. value: bn, ln, ins, or None
+    t: 1.0  # temperature
+    prenet_dropout: 0.0
+    gru_dropout: 0.0
+
+    # train
+    batch_size: 128
+    lr: 0.0001
+    num_epochs: 2000
+    steps_per_epoch: 100
+    save_per_epoch: 2
+---
+train2:
+    # path
+    data_path: '../../datasets/slt'
+
+    # model
+    hidden_units: 256  # alias: E
+    num_banks: 8
+    num_highway_blocks: 8
+    norm_type: 'ins'  # a normalizer function. value: bn, ln, ins, or None
+    t: 1.0  # temperature
+    dropout_rate: 0.5
+
+    #
+    batch_size: 64
+    lr: 0.0003
+    lr_cyclic_margin: 0.
+    lr_cyclic_steps: 5000
+    clip_value_max: 3.
+    clip_value_min: -3.
+    clip_norm: 10
+    num_epochs: 100000
+    steps_per_epoch: 100
+    save_per_epoch: 50
+    test_per_epoch: 1
+---
+test1:
+    # path
+    data_path: '../../datasets/TIMIT/TEST/*/*/*.WAV'
+
+    # test
+    batch_size: 128
+---
+test2:
+    # path
+    data_path: './datasets/arctic/slt/*.wav'
+
+    # test
+    batch_size: 32
+---
+convert:
+    # path
+    data_path: './datasets/test/*.wav'
+
+    # convert
+    one_full_wav: False
+    batch_size: 1
+    emphasis_magnitude: 1.2
