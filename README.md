@@ -1,6 +1,6 @@
-# 딥 러닝을 이용한 음성 변환기(Voice-Converter)
+# Voice Converter using deep learning.
 
-This program is based on by https://github.com/andabi/deep-voice-conversion
+This program is based on https://github.com/andabi/deep-voice-conversion
 
 Original Author :
 
@@ -8,13 +8,13 @@ Original Author :
 
 [Kyubyong Park](https://github.com/Kyubyong) (kbpark.linguist@gmail.com)
 
-# 실행 환경
+# Environment
 
 Ubuntu 16.04 LTS 64bit
 
 Python 3.5 64bit
 
-# 필요 라이브러리
+# Required Packages
 
 - tensorflow == 1.8
 - numpy == 1.15.0
@@ -32,7 +32,7 @@ Python 3.5 64bit
 - colorama
 - keyboard
 
-## 주의!
+## Caution!
 - 파이썬 버전을 반드시 확인하세요!
   파이썬 버전 확인은 python --version으로 확인 하실 수 있습니다.
   해당 명령어를 실행했을 때 파이썬 2.x.x로 버전이 확인된다면
@@ -42,7 +42,7 @@ Python 3.5 64bit
   터미널에서 sudo su 명령어로 루트 권한을 준 뒤 해당 코드를 실행하시거나
   해당 코드를 실행 시 앞에 sudo 를 추가하여 루트 권한으로 실행하시기 바랍니다.
 
-# 실행 방법
+# How to run...
 
 터미널을 열어서 change_model.py 코드를 실행합니다.
 
