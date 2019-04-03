@@ -21,6 +21,7 @@ Python 3.5 64bit
 - librosa == 0.5.1
 - joblib == 0.11
 - tensorpack == 0.8.6
+- tensorflow-plot == 0.2.0
 - pyyaml
 - soundfile
 - pydub
